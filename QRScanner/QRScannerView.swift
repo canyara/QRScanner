@@ -186,9 +186,14 @@ public class QRScannerView: UIView {
 
     private func configureSession() {
         // check device initialize
-        guard let videoDevice = AVCaptureDevice.default(for: .video) else {
-            failure(.deviceFailure(.videoUnavailable))
-            return
+        var builtInTripleCamera: AVCaptureDevice.DeviceType = .builtInDuoCamera
+        if #available(iOS 13.0, *) {
+            builtInTripleCamera = .builtInTripleCamera
+        }
+
+        guard var videoDevice = AVCaptureDevice.default(builtInTripleCamera, for: .video, position: .back) else {
+          failure(.deviceFailure(.videoUnavailable))
+          return
         }
 
         // check input
